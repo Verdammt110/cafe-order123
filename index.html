@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>카페 주문</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .menu {
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>☕ 카페 주문</h1>
+
+<div style="margin-bottom:15px;">
+  <label>테이블 번호</label><br>
+  <input type="number" id="tableNumber" placeholder="예: 3" style="width:100%; padding:8px;">
+</div>
+
+<div class="menu">
+  <p>비타500 + 파워에이드</p>
+  <button onclick="order('비타500 + 파워에이드')">주문하기</button>
+</div>
+
+<div class="menu">
+  <p>몬스터 + 설탕젤리</p>
+  <button onclick="order('몬스터 + 설탕젤리')">주문하기</button>
+</div>
+
+<div class="menu">
+  <p>메론소다</p>
+  <button onclick="order('메론소다')">주문하기</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDyrL_U04KFTaVeARyI4UoWNVrZT4TtzI",
+    authDomain: "cafe-order-3317d.firebaseapp.com",
+    projectId: "cafe-order-3317d",
+    storageBucket: "cafe-order-3317d.firebasestorage.app",
+    messagingSenderId: "102833777324",
+    appId: "1:102833777324:web:6c187332c43ffebb8c4d09"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function order(menu) {
+    const table = document.getElementById("tableNumber").value;
+
+    if (!table) {
+      alert("테이블 번호를 입력해주세요");
+      return;
+    }
+
+    await addDoc(collection(db, "orders"), {
+      table: table,
+      menu: menu,
+      createdAt: serverTimestamp()
+    });
+
+    alert(`${table}번 테이블 주문 완료!`);
+  }
+
+  window.order = order;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자</title>
+</head>
+<body>
+
+<h1>주문 목록</h1>
+<div id="orders"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, deleteDoc, doc } 
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDyrL_U04KFTaVeARyI4UoWNVrZT4TtzI",
+    authDomain: "cafe-order-3317d.firebaseapp.com",
+    projectId: "cafe-order-3317d",
+    storageBucket: "cafe-order-3317d.firebasestorage.app",
+    messagingSenderId: "102833777324",
+    appId: "1:102833777324:web:6c187332c43ffebb8c4d09"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const ordersDiv = document.getElementById("orders");
+
+  onSnapshot(collection(db, "orders"), (snapshot) => {
+    ordersDiv.innerHTML = "";
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const div = document.createElement("div");
+      div.innerHTML = `
+  <p><strong>${data.table}번 테이블</strong></p>
+  <p>☕ ${data.menu}</p>
+  <p>⏰ ${data.time}</p>
+  <button onclick="finish('${docSnap.id}')">완료</button>
+`;
+
+         
+      ordersDiv.appendChild(div);
+    });
+  });
+
+  window.finish = async (id) => {
+    await deleteDoc(doc(db, "orders", id));
+  };
+</script>
+
+</body>
+</html>
